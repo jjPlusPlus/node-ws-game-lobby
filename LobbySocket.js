@@ -1,8 +1,12 @@
+import http from "http";
+// import url from "url";
 import WebSocket from "ws";
 import LobbyState from "./LobbyState.js";
 
-const LobbySocket = new WebSocket.Server({ port: 8080 });
-const state = new LobbyState();
+const server = http.createServer();
+
+const LobbySocket = new WebSocket.Server({ server: server, path: "/lobby" });
+const state = new LobbyState({server: server});
 
 LobbySocket.on("connection", (ws) => {
   ws.on("open", (msg) => {
@@ -31,7 +35,7 @@ LobbySocket.on("connection", (ws) => {
         break;
       case "PLAYER_READY": 
         console.log("adding a player to the matchmaking queue");
-        state.playerReadyForMM(message.player);
+        state.playerReadyForMM(message.player, LobbySocket);
         broadcastUpdate();
         break;
       case "PLAYER_CANCEL":
@@ -67,5 +71,7 @@ function broadcastUpdate() {
     client.send(JSON.stringify({ type: "UPDATE_LOBBY", state }));
   });
 }
+
+server.listen(8080);
 
 export default LobbySocket;
