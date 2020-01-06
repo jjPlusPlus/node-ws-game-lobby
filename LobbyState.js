@@ -125,18 +125,4 @@ export default class LobbyState {
       this.state.matchMakingQueue.waiting = waiting;
     }
   }
-
-  async addMatch() {
-
-  }
-
-  async updateMatch() {
-    // update a match
-  }
-
-  async removeMatch() {
-    // remove a match
-  }
-
-
 }
