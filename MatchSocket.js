@@ -69,7 +69,7 @@ export default class MatchSocket {
 
   broadcastUpdate(socket) {
     socket.clients.forEach((client) => {
-      client.send(JSON.stringify({ type: "UPDATE_MATCH", state }));
+      client.send(JSON.stringify({ type: "UPDATE_MATCH", state: this.state.state }));
     });
   }
 }
