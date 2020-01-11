@@ -34,7 +34,7 @@ export default class MatchSocket {
         switch (message.type) {
           case "JOIN_MATCH":
             console.log("adding a player to the match, then broadcasting updated state");
-            this.state.addPlayer(message.player, this.players, this.socket);
+            this.state.playerJoined(message.player, this.socket);
             break;
           case "PLAYER_DISCONNECTED":
             console.log("removing a player from the match, then broadcasting update");
