@@ -4,11 +4,6 @@ import _ from "lodash";
 const ROUND_TIME = process.env.ROUND_TIME || 60;
 const COUNTDOWN_TIMER = process.env.COUNTDOWN_TIMER || 10;
 const NUM_ROUNDS = process.env.NUM_ROUNDS || 10;
-/* CLASS MatchState
- * When the match starts, generate a list of words
- * Need to wait for the players to join before starting the match
- * 
-*/
 
 export default class MatchState {
   constructor() {
@@ -30,7 +25,7 @@ export default class MatchState {
       client.send(JSON.stringify({ type: "MATCH_READY" }));
     });
 
-    // start the countdown timer
+    // PRE-MATCH COUNTDOWN TIMER
     while (this.state.countdown > 0) {
       yield this.sleep(1000);
       this.state.countdown -= 1;

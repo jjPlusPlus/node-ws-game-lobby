@@ -23,19 +23,13 @@ export default class MatchSocket {
 
     this.socket.on("connection", (ws) => {
 
-      // TODO: do something with these
+      // TODO: do something with these or remove them
       ws.on("open", (msg) => { console.log("match socket opened"); });
       ws.on("upgrade", () => { console.log("match socket upgraded: handle auth here"); });
 
-
-      /* Message Controller
-       * We will need messages when a player connects/disconnects from the match.
-       * We will need to handle a message when a player scores a point 
-       * We will need to handle a message when a player chooses to pass
-      */
       ws.on("message", (msg) => {
+
         let message = JSON.parse(msg);
-        console.log(message);
 
         switch (message.type) {
           case "JOIN_MATCH":
