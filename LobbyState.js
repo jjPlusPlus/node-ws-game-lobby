@@ -82,7 +82,7 @@ export default class LobbyState {
       const group = this.state.matchMakingQueue.waiting.slice();
       
       // 1. move the players into a new group
-      this.state.matchMakingQueue.groups.push(group);
+      // this.state.matchMakingQueue.groups.push(group);
 
       // 2. clear out the wait list
       this.state.matchMakingQueue.waiting = [];
@@ -103,12 +103,15 @@ export default class LobbyState {
       // 6. add the new match to the list
       this.state.matches.push(match);
 
-      // 7. remove the group
-      
+      // 7. TO DO: remove the group
+      this.state.matchMakingQueue.groups = this.state.matchMakingQueue.groups.filter((g) => {
+        // do nothing for now...
+        return g;
+      });  
+
       // 8. broadcast to all listeners to start a match.
       //    this means that all players who are in the group need to route to the match view
       //    and subscribe to the new MatchSocket 
-      //    Also, this means we will need access to the LobbySocket from here
       const broadcast = { players: group, channel: channel };
       socket.clients.forEach((client) => {
         client.send(JSON.stringify({ type: "NEW_MATCH", broadcast }));
