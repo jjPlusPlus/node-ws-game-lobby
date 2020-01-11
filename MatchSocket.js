@@ -5,8 +5,12 @@ import MatchState from "./MatchState.js";
 export default class MatchSocket {
   constructor(params) {
 
-    this.state = new MatchState();
-    this.players = params.players || [];
+    let inheritedPlayers = params.players || [];
+    inheritedPlayers.forEach((player, index) => {
+      inheritedPlayers[index].online = false;
+      inheritedPlayers[index].score = 0;
+    });
+    this.state = new MatchState({ players: inheritedPlayers });
     this.server = http.createServer();
 
     try {
