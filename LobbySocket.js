@@ -9,18 +9,14 @@ const LobbySocket = new WebSocket.Server({ server: server, path: "/lobby" });
 const state = new LobbyState({server: server});
 
 LobbySocket.on("connection", (ws) => {
-  ws.on("open", (msg) => {
-    console.log("socket opened");
-  });
 
-  ws.on("upgrade", () => {
-    console.log("socket upgraded: handle auth here");
-  });
+  // TODO: Do something with these or remove them
+  ws.on("open", (msg) => { console.log("Lobby socket opened"); });
+  ws.on("upgrade", () => { console.log("Lobby socket upgraded: handle auth here"); });
 
   ws.on("message", (msg) => {
 
     let message = JSON.parse(msg);
-    console.log(message);
 
     switch (message.type) {
       case "JOIN_LOBBY":
