@@ -13,10 +13,10 @@ export default class MatchState {
       roundTime: ROUND_TIME,
       players: params.players || [],
       round: 0,
+      words: this.generateWords(NUM_ROUNDS),
       currentWord: null,
       winner: null,
     }
-    this.words = this.generateWords(NUM_ROUNDS)
   }
 
   async startMatch(socket) {
