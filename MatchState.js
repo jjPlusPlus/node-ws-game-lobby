@@ -19,6 +19,12 @@ export default class MatchState {
     }
   }
 
+  generateWords(numWords) {
+    const shuffle = _.shuffle(words);
+    const take = shuffle.slice(0, 10);
+    return take;
+  }
+
   async startMatch(socket) {
     this.state.ready = true;
     socket.clients.forEach((client) => {
