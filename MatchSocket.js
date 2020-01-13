@@ -65,7 +65,10 @@ export default class MatchSocket {
     });
   }
 
-  
+  cleanup() {
+    this.server.close()
+    this.socket.terminate();
+  }
 
   broadcastUpdate(socket) {
     socket.clients.forEach((client) => {
