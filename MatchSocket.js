@@ -43,7 +43,7 @@ export default class MatchSocket {
             break;
           case "PLAYER_SCORED": 
             console.log("A player scored a point");
-            this.state.handlePlayerScored(message.player, message,word);
+            this.state.handlePlayerScored(message.player, message.word, this.socket);
             break;
           case "PLAYER_PASSES":
             console.log("A player has chosen to skip the current word");

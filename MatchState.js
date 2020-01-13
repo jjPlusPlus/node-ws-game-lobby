@@ -6,12 +6,12 @@ const COUNTDOWN_TIMER = process.env.COUNTDOWN_TIMER || 10;
 const NUM_ROUNDS = process.env.NUM_ROUNDS || 10;
 
 export default class MatchState {
-  constructor() {
+  constructor(params) {
     this.state = {
       ready: false,
       countdown: COUNTDOWN_TIMER,
       roundTime: ROUND_TIME,
-      players: [],
+      players: params.players || [],
       round: 0,
       currentWord: null,
       winner: null,
@@ -99,11 +99,21 @@ export default class MatchState {
     this.state.players.push(player);
   }
 
-  async handlePlayerSkip(player, word) {
-
+  async handlePlayerScored(player, word, socket) {
+    // TODO: make sure that the word is valid 
+    console.log(player.name);
+    console.log(word.word);
+    // increase score for the player in question based on the time left
+    const playerIndex = this.state.players.findIndex((pl) => pl.id === player.id);
+    this.state.players[playerIndex].score += 100 + this.state.roundTime;
+    // update currentWord & reset the round timer
+    this.state.round += 1;
+    this.state.roundTime = ROUND_TIME;
+    this.state.currentWord = this.state.words[this.state.round];
+    
   }
 
-  async handlePlayerScored(player, word) {
-    
+  async handlePlayerSkip(player, word) {
+
   }
 }
