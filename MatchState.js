@@ -1,5 +1,6 @@
 import words from "./words.js";
 import _ from "lodash";
+import sleep from "./utilities.js";
 
 const ROUND_TIME = process.env.ROUND_TIME || 60;
 const COUNTDOWN_TIMER = process.env.COUNTDOWN_TIMER || 10;
@@ -56,30 +57,17 @@ export default class MatchState {
 
     // PRE-MATCH COUNTDOWN TIMER
     while (this.state.countdown > 0) {
-      yield this.sleep(1000);
+      await sleep(1000);
       this.state.countdown -= 1;
       socket.clients.forEach((client) => {
         client.send(JSON.stringify({ type: "UPDATE_MATCH", state: this.state }));
       });
     }
 
-    // Once the countdown reaches 0
-    while (this.state.countdown === 0) {
-      /* fr start the match 
-       * FOR EACH ROUND: 
-       *   set the current word  
-       *   start the countdown timer 
-       *   broadcast the time each second
-       * TO DO: 
-       *   handle looping through each word
-       *   handle when a player scores
-      */
-      const round = this.state.round;
-      const currentWord = this.words[round]; 
-      this.state.roundTime = ROUND_TIME;
-      socket.clients.forEach((client) => {
-        client.send(JSON.stringify({ type: "ROUND_UPDATE", state: { word: currentWord, timer: this.state.roundTime } }));
-      });
+    // WHILE THERE ARE STILL WORDS IN THE QUEUE
+    while (this.state.countdown === 0 && this.state.round < this.state.words.length) {
+      await this.startRound(socket);
+    }
 
     // MATCH IS OVER
     while (this.state.countdown === 0 && this.state.round === this.state.words.length && this.state.ready === true) {
@@ -124,35 +112,51 @@ export default class MatchState {
 
       socket.clients.forEach((client) => {
         client.send(JSON.stringify({ type: "MATCH_OVER", state: this.state, result }));
+      });
 
-  async waitForPlayers() {
+      // need to: remove the socket
+      // need to: free up the channel (occupied: false)
+      // need to: delete this class 
 
-  }
+    }
 
     return;
   }
 
-  async addPlayer(player, players, socket) {
-    // change a player's state to 'online'
-    player.score = 0;
-    this.state.players.push(player);
+  async startRound(socket) {
+    console.log('starting round');
+    // get the current word
+    
+    const round = this.state.round;
+    const currentWord = this.state.words[round].word;
+    this.state.roundTime = ROUND_TIME;
 
+    console.log(this.state.round, this.state.words, currentWord);
+    // broadcast the round state to the player
     socket.clients.forEach((client) => {
-      client.send(JSON.stringify({ type: "UPDATE_MATCH", state: this.state }));
+      client.send(JSON.stringify({ type: "UPDATE_ROUND", state: { word: currentWord, timer: this.state.roundTime } }));
     });
 
-    // All of the players have joined
-    if (this.state.players.length === players.length) {
+    // each second, decrement the round timer
+    while (this.state.roundTime > 0) {
+      await sleep(1000);
+      console.log("decrementing clock ", this.state.roundTime);
       socket.clients.forEach((client) => {
-        client.send(JSON.stringify({ type: "MATCH_READY" }));
+        client.send(JSON.stringify({ type: "ROUND_TIMER", state: { word: currentWord.word, timer: this.state.roundTime } }));
       });
-      this.startMatch(socket);
+      this.state.roundTime -= 1;
     }
+    while (this.state.roundTime === 0) {
+      this.state.round += 1;
+      this.state.roundTime = ROUND_TIME;
+      this.state.currentWord = this.state.words[round];
+    }
+    return;
   }
 
   async playerDisconnected(player) {
-    // change a player's state to 'offline'
-    this.state.players.push(player);
+    // remove a player from the match entirely
+    // this.state.players.push(player);
   }
 
   async handlePlayerScored(player, word, socket) {
