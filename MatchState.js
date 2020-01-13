@@ -90,19 +90,14 @@ export default class MatchState {
     }
   }
 
-  sleep = (ms) => {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
+      socket.clients.forEach((client) => {
+        client.send(JSON.stringify({ type: "MATCH_OVER", state: this.state, result }));
 
   async waitForPlayers() {
 
   }
 
-  async generateWords(numWords) {
-    const shuffle = _.shuffle(words);
-    const take = shuffle.slice(numWords - 1);
-    console.log(take);
-    return take;
+    return;
   }
 
   async addPlayer(player, players, socket) {
