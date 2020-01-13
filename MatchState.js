@@ -25,6 +25,18 @@ export default class MatchState {
     return take;
   }
 
+  async playerJoined(player, socket) {
+    const playerIndex = this.state.players.findIndex((pl) => pl.id === player.id);
+
+    if (playerIndex === -1) {
+      return console.error("couldn't find a player with a matching ID");
+    }
+    this.state.players[playerIndex].online = true;
+
+    socket.clients.forEach((client) => {
+      client.send(JSON.stringify({ type: "UPDATE_MATCH", state: this.state }));
+    });
+
   async startMatch(socket) {
     this.state.ready = true;
     socket.clients.forEach((client) => {
