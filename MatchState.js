@@ -81,14 +81,46 @@ export default class MatchState {
         client.send(JSON.stringify({ type: "ROUND_UPDATE", state: { word: currentWord, timer: this.state.roundTime } }));
       });
 
-      while (this.state.roundTime > 0) {
-        yield sleep(1000);
-        socket.clients.forEach((client) => {
-          client.send(JSON.stringify({ type: "ROUND_TIMER", state: { word: currentWord, timer: this.state.roundTime } }));
-        });
+    // MATCH IS OVER
+    while (this.state.countdown === 0 && this.state.round === this.state.words.length && this.state.ready === true) {
+      this.state.ready = false;
+      // what if all players have 0? who is the winner? 
+      // what if only 2 of 3 players have the highest 
+      const players = this.state.players.slice();
+      
+      let highScore, draw, tie, winners, winner;
+
+
+      highScore = players.reduce((acc, player) => player.score > acc.score ? player : acc);
+
+      winners = players.filter((p) => p.score === highScore.score);
+
+      // if ALL players have the same score, then it's a draw
+      draw = winners.length === players.length;
+
+      // tie is more than one player have the highest score, but not all
+      tie = winners.length < players.length && winners.length > 1;
+
+      let testTernary = draw ? draw : (tie ? tie : winners);
+
+      let result;
+
+      if (draw) {
+        result = {
+          result: "draw",
+          winners: null
+        }
+      } else if (tie) {
+        result = {
+          result: "tie",
+          winners: winners
+        }
+      } else {
+        result = {
+          result: "winner",
+          winner: winners
+        }
       }
-    }
-  }
 
       socket.clients.forEach((client) => {
         client.send(JSON.stringify({ type: "MATCH_OVER", state: this.state, result }));
