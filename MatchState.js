@@ -37,7 +37,18 @@ export default class MatchState {
       client.send(JSON.stringify({ type: "UPDATE_MATCH", state: this.state }));
     });
 
+    // All of the players have joined if all of the players array has 'online' true
+    const readyToStart = this.state.players.filter((p) => p.online === false).length === 0;
+    if (readyToStart) {
+      console.log("all players have joined");
+      await this.startMatch(socket);
+    }
+  }
+
   async startMatch(socket) {
+    console.log('starting match');
+
+    // BROADCAST THE READY STATE
     this.state.ready = true;
     socket.clients.forEach((client) => {
       client.send(JSON.stringify({ type: "MATCH_READY" }));
