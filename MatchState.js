@@ -135,6 +135,12 @@ export default class MatchState {
     this.state.roundTime = ROUND_TIME;
     this.state.currentWord = this.state.words[this.state.round];
     
+    socket.clients.forEach((client) => {
+      client.send(JSON.stringify({ type: "UPDATE_MATCH", state: this.state }));
+    });
+    socket.clients.forEach((client) => {
+      client.send(JSON.stringify({ type: "PLAYER_SCORED", payload: { player, word } }));
+    });
   }
 
   async handlePlayerSkip(player, word) {
