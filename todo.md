@@ -1,0 +1,27 @@
+## To Do: 
+- [x] client sends "PLAYER_SCORED" message if the player gets a match 
+- [x] matchsocket recieves "PLAYER_SCORED" message: 
+  - [x] Add a point for the player who scored 
+  - [x] Update currentWord, reset ROUND_TIME 
+  - [x] Broadcast "PLAYER_SCORED" back to the clients 
+- [] test and implement the end-game 
+  - [x] server when the round is === words.length 
+  - [x] server broadcasts a "MATCH_OVER" with a { winner } OR a Tie 
+  - [IP] server cleans up socket and instance of MatchState 
+  - [] client shows a message when recieving MATCH_OVER 
+  - [] client closing the Match over message routes back to the Lobby 
+  - [future] server increments the Player's 'wins' in the db 
+- [] client shows a 'waiting for players to connect' before match starts 
+- [] client only shows player camera and first word / words list once countdown ends 
+- [] client shows a 'loading' state while Rekognition is coming back with labels 
+- [] server appropriately handles a player disconnecting from the Lobby 
+- [] server appropriately handles a player disconnecting from the Match
+- [] server does not double-add players to the Lobby 
+- [] server does not double-add players to the Match
+- [] client shows a UI that the socket is disconnected 
+- [] client shows a UI to allow the user to re-connect to the socket 
+- [] e2e integration test: two players can 
+  - [] log in 
+  - [] be matched into a game 
+  - [] play through a game  
+- [] server self-healing
