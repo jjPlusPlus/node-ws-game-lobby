@@ -42,9 +42,11 @@ export default class LobbyState {
     this.server = params.server || null;
 
     cognitoidentityserviceprovider.listUsers({ UserPoolId: "eu-west-1_vLaPCLiOu" }, (err, data) => {
+      console.log(err, data)
+      if (err) { return }
       return this.state.offline = data.Users;
     });
-  
+
   }
 
   async playerOnline(player) {
